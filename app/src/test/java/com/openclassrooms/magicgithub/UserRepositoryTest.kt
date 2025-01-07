@@ -55,4 +55,65 @@ class UserRepositoryTest {
         userRepository.deleteUser(userToDelete)
         Assert.assertFalse(userRepository.getUsers().contains(userToDelete))
     }
+
+    @Test
+    fun checkDefaultUserStatus() {
+        val users = userRepository.getUsers()
+        assertTrue("All users should be active by default", users.all { it.isActive })
+    }
+
+    @Test
+    fun toggleUserStatusWithSuccess() {
+        // Get first user and ensure it's active by default
+        val user = userRepository.getUsers()[0]
+        val initialStatus = user.isActive
+
+        // Toggle status
+        user.isActive = !initialStatus
+
+        // Check if status was changed
+        Assert.assertNotEquals(
+            "User status should be toggled",
+            initialStatus,
+            user.isActive
+        )
+    }
+
+
+
+    @Test
+    fun checkRandomUserStatus() {
+        userRepository.addRandomUser()
+        val randomUser = userRepository.getUsers().last()
+        assertTrue("Random user should be active by default", randomUser.isActive)
+    }
+
+    @Test
+    fun maintainUserStatusAfterListOperations() {
+        // Get a user and change its status
+        val user = userRepository.getUsers()[0]
+        user.isActive = false
+        // Add a new random user
+        userRepository.addRandomUser()
+        // Check if the status is maintained
+        Assert.assertFalse(
+            "User status should be maintained after list operations",
+            userRepository.getUsers().first().isActive
+        )
+    }
+
+    @Test
+    fun verifyActiveAndInactiveUsersCoexist() {
+        // Get two users
+        val users = userRepository.getUsers().take(2)
+        // Set different statuses
+        users[0].isActive = false
+        users[1].isActive = true
+        // Verify both statuses exist in the list
+        assertTrue(
+            "Repository should contain both active and inactive users",
+            userRepository.getUsers().any { !it.isActive } &&
+                    userRepository.getUsers().any { it.isActive }
+        )
+    }
 }

@@ -63,3 +63,5 @@ class UserListInstrumentedTest {
             .check(ItemCount(currentUsersSize - 1))
     }
 }
+
+
