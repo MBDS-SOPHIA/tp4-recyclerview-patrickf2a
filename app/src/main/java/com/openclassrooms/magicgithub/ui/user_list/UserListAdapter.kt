@@ -51,6 +51,4 @@ class UserListAdapter(  // FOR CALLBACK ---
         Collections.swap(users, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
-
-    fun getUsers(): List<User> = users.toList()
 }

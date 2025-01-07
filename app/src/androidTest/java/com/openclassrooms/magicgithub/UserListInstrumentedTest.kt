@@ -2,9 +2,11 @@ package com.openclassrooms.magicgithub
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
@@ -12,17 +14,19 @@ import com.openclassrooms.magicgithub.di.Injection.getRepository
 import com.openclassrooms.magicgithub.ui.user_list.ListUserActivity
 import com.openclassrooms.magicgithub.utils.RecyclerViewUtils.ItemCount
 import com.openclassrooms.magicgithub.utils.RecyclerViewUtils.clickChildView
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 
 /**
  * Instrumented test, which will execute on an Android device.
  * Testing ListUserActivity screen.
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(JUnit4::class)
 @LargeTest
 class UserListInstrumentedTest {
     @Rule
@@ -61,6 +65,15 @@ class UserListInstrumentedTest {
             )
         Espresso.onView(ViewMatchers.withId(R.id.activity_list_user_rv))
             .check(ItemCount(currentUsersSize - 1))
+    }
+
+    @Test
+    fun checkIfSwipeToToggleStatusIsWorking() {
+        // Effectue un swipe sur le premier élément
+        Espresso.onView(ViewMatchers.withId(R.id.activity_list_user_rv))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, ViewActions.swipeRight()))
+        val user = getRepository().getUsers()[0]
+        assert(!user.isActive)
     }
 }
 
